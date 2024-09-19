@@ -1,0 +1,43 @@
+
+
+	AREA IM, CODE, READONLY
+	ENTRY
+	;EXPORT MAIN;
+		
+MAIN
+	LDR r0,=stack_top;
+	MOV sp, r0;
+	
+	MOV r0, #0xF;
+	MOV r1, #0xaa000000;
+	MOV r2, #0x0000cc00;
+	MOV r4, #0xFFFFFFFF;
+	LDR r5, =0x55555555;
+	
+	BL Sum;
+	LDR r1,=x;
+	STR r0,[r1];
+Here B Here;
+	
+	
+Sum 
+	; Push into the stack
+	PUSH {r4, r5};
+	ADD r0, r0, r1;
+	ADD r0, r0, r2;
+	ADD r4, r0, r4;
+	ADD r5, r4, r5;
+	MOV r0, r5;
+	; Pop from the stack
+	POP {r4, r5};
+	BX lr; eq to MOV pc, lr;
+	
+	AREA DM, DATA, READWRITE
+x	space 50*4;
+
+	AREA STACK, DATA, READWRITE, NOINIT, ALIGN=3
+stack_limit
+	SPACE 100*4
+stack_top
+
+	END;
